@@ -184,8 +184,8 @@ if __name__ == '__main__':
                 'message': None,
             })
 
-    app = Flask(__name__, supports_credentials=True)
-    app = CORS(app)
+    app = Flask(__name__)
+    app = CORS(app, supports_credentials=True)
     api = Api(app)
     api.add_resource(SummaryResource, '/summary')
     api.add_resource(IndexResource, '/')
