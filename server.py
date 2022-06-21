@@ -29,15 +29,25 @@ class SummaryInferrer(object):
         self.preprocess_fn = preprocess_fn
 
     def generate(self, content: str, max_len_summary: int):
-        dataloader = self.preprocess_fn(content)
-        feature = next(iter(dataloader))
+        print("content", content)
+        feature = self.preprocess_fn(content)
+        print("feature", feature)
         raw_data = feature['raw_data']
-        content = {k: v for k, v in feature.items() if k != 'raw_data'}
-        gen = model.generate(max_length=max_len_summary,
-                             eos_token_id=tokenizer.sep_token_id,
-                             decoder_start_token_id=tokenizer.cls_token_id,
-                             **content)
-        gen = tokenizer.batch_decode(gen, skip_special_tokens=True)
+        content = {
+            k: v
+            for k, v in feature.items() if k not in ['raw_data', 'title']
+        }
+        print("content", content)
+        gen = model.generate(
+            max_length=max_len_summary,
+            eos_token_id=self.tokenizer.sep_token_id,
+            decoder_start_token_id=self.tokenizer.cls_token_id,
+            **content)
+        gen = self.tokenizer.batch_decode(gen, skip_special_tokens=True)
+        print("gen", gen)
+        gen = [item.replace(' ', '') for item in gen]
+        print("gen", gen)
+        print(zip(gen, raw_data))
         results = [
             "{}\t{}".format(x.replace(' ', ''), y)
             for x, y in zip(gen, raw_data)
@@ -85,7 +95,6 @@ if __name__ == '__main__':
     logger.info('Loading model...')
     model = torch.load(MODEL_PATH, map_location=device)
 
-
     def preprocess_fn(content):
         contents = []
         # if content is str
@@ -106,12 +115,13 @@ if __name__ == '__main__':
         else:
             raise ValueError('content should be str or list of str')
 
-        dataloader = prepare_data(tokenizer=tokenizer,
-                            max_len=MAX_LEN,
-                            batch_size=BATCH_SIZE,
-                            mode='predict',
-                            data=contents)
-        return dataloader
+        dataloader = prepare_data(device,
+                                  tokenizer=tokenizer,
+                                  max_len=MAX_LEN,
+                                  batch_size=BATCH_SIZE,
+                                  mode='predict',
+                                  data=contents)
+        return next(iter(dataloader))
 
     inferrer = SummaryInferrer(model, preprocess_fn)
     logger.info('Starting server')
@@ -124,8 +134,9 @@ if __name__ == '__main__':
     API_ECODE_SERVER_ERR = 2
 
     class SummaryResource(Resource):
+
         def options(self):
-          pass
+            pass
 
         def post(self):
             content = request.json['content']
@@ -198,5 +209,3 @@ if __name__ == '__main__':
     api.add_resource(IndexResource, '/')
     # app.run(host=HOST, port=PORT, debug=DEBUG_MODE, load_dotenv=False, use_reloader=False)
     app.run()
-
-    
