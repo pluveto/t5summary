@@ -48,12 +48,7 @@ class SummaryInferrer(object):
         print("gen", gen)
         gen = [item.replace(' ', '') for item in gen]
         print("gen", gen)
-        print(zip(gen, raw_data))
-        results = [
-            "{}\t{}".format(x.replace(' ', ''), y)
-            for x, y in zip(gen, raw_data)
-        ]
-        return results
+        return gen[0]
 
 
 if __name__ == '__main__':
