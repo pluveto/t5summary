@@ -105,12 +105,12 @@ if __name__ == '__main__':
         else:
             raise ValueError('content should be str or list of str')
 
-        data = prepare_data(tokenizer=tokenizer,
+        dataloader = prepare_data(tokenizer=tokenizer,
                             max_len=MAX_LEN,
                             batch_size=BATCH_SIZE,
                             mode='predict',
-                            dataloader=contents)
-        return data
+                            data=contents)
+        return dataloader
 
     inferrer = SummaryInferrer(model, preprocess_fn)
     logger.info('Starting server')
