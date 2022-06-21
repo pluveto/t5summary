@@ -1,6 +1,6 @@
 import logging
 import time
-from common import init_logger, load_dot_env
+from common import init_logger, load_dotenv
 from data import prepare_data
 from tokenizer import T5TokenizerFast
 from transformers import BertTokenizer
@@ -46,7 +46,7 @@ if __name__ == '__main__':
     # initializing arguments
 
     try:
-        load_dot_env([".env", "dev.env"])
+        load_dotenv([".env", "dev.env"])
     except FileNotFoundError:
         print("not found .env file")
 
@@ -187,4 +187,4 @@ if __name__ == '__main__':
     api = Api(app)
     api.add_resource(SummaryResource, '/summary')
     api.add_resource(IndexResource, '/')
-    app.run(host=HOST, port=PORT, debug=DEBUG_MODE)
+    app.run(host=HOST, port=PORT, debug=DEBUG_MODE, load_dotenv=False, use_reloader=False)

@@ -2,22 +2,22 @@ import logging
 import os
 
 
-def load_dot_env(dot_env_file: str = '.env'):
+def load_dotenv(dotenv_file: str = '.env'):
     """Load environment variables from a .env file.
     Args:
-        dot_env_file (str): filename of the .env file.
+        dotenv_file (str): filename of the .env file.
     """
-    # if dot_env_file is list, load first existent file
-    if isinstance(dot_env_file, list):
-        for f in dot_env_file:
+    # if dotenv_file is list, load first existent file
+    if isinstance(dotenv_file, list):
+        for f in dotenv_file:
             if os.path.exists(f):
-                dot_env_file = f
+                dotenv_file = f
                 break
 
-    if not os.path.exists(dot_env_file):
-        raise FileNotFoundError(f'{dot_env_file} not found.')
+    if not os.path.exists(dotenv_file):
+        raise FileNotFoundError(f'{dotenv_file} not found.')
 
-    with open(dot_env_file, encoding='utf-8') as f:
+    with open(dotenv_file, encoding='utf-8') as f:
         for l in f.readlines():
             # strip comments
             l = l.split('#')[0]
