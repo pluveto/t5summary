@@ -16,7 +16,7 @@ def load_dotenv(dotenv_file: str = '.env'):
 
     if not os.path.exists(dotenv_file):
         raise FileNotFoundError(f'{dotenv_file} not found.')
-
+    dict_ = {}
     with open(dotenv_file, encoding='utf-8') as f:
         for l in f.readlines():
             # strip comments
@@ -30,10 +30,11 @@ def load_dotenv(dotenv_file: str = '.env'):
             # split key and value
             k, v = l.strip().split('=')
             os.environ[k] = v
+            dict_[k] = v
     # debug
     if bool(os.environ.get('DEBUG', None)):
         print('Loaded environment variables:')
-        for k, v in os.environ.items():
+        for k, v in dict_.items():
             print('  {}: {}'.format(k, v))
 
 
