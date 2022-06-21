@@ -121,7 +121,6 @@ if __name__ == '__main__':
     API_ECODE_SERVER_ERR = 2
 
     class SummaryResource(Resource):
-
         def post(self):
             content = request.json['content']
             if content is None:
@@ -185,7 +184,7 @@ if __name__ == '__main__':
             })
 
     app = Flask(__name__)
-    app = CORS(app, supports_credentials=True)
+    CORS(app, supports_credentials=True)
     api = Api(app)
     api.add_resource(SummaryResource, '/summary')
     api.add_resource(IndexResource, '/')
