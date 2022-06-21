@@ -209,9 +209,9 @@ def prepare_data(tokenizer: PreTrainedTokenizer,
                  data_path=None,
                  data=None):
 
-    loaded_data = None
-
+    loaded_data = None    
     if data_path is not None:
+        
         filetype = data_path.split('.')[-1]
         if filetype == 'json':
             loaded_data = load_data_json(data_path)

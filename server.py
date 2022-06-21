@@ -89,17 +89,17 @@ if __name__ == '__main__':
         contents = []
         # if content is str
         if isinstance(content, str):
-            contents.append([{
+            contents.append({
                 'title': None,
                 'content': content,
-            }])
+            })
         elif isinstance(content, list):
             for item in content:
                 if isinstance(item, str):
-                    contents.append([{
+                    contents.append({
                         'title': None,
                         'content': item,
-                    }])
+                    })
                 else:
                     raise ValueError('content should be str or list of str')
         else:
