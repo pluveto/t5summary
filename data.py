@@ -207,7 +207,7 @@ def prepare_data(tokenizer: PreTrainedTokenizer,
                  batch_size: int = 2,
                  mode='train',
                  data_path=None,
-                 dataloader=None):
+                 data=None):
 
     loaded_data = None
 
@@ -223,8 +223,8 @@ def prepare_data(tokenizer: PreTrainedTokenizer,
             loaded_data = load_data_csv(data_path)
         else:
             raise Exception('Unsupported data file type: {}'.format(filetype))
-    if dataloader is None:
-        loaded_data = dataloader
+    else:
+        loaded_data = data
 
     encoded_data = encode_dict(loaded_data, tokenizer, max_len, mode)
     dataloader = DataLoader(KeyDataset(encoded_data),
