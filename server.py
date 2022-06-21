@@ -104,26 +104,21 @@ if __name__ == '__main__':
             s = s.replace('\n', '')
             s = s.replace('　', '')
             s = s.replace(' ', '')
+            return s
 
         contents = []
         # if content is str
         if isinstance(content, str):
-            contents.append({
-                'title': None,
-                'content': _preprocess(content),
-            })
+            contents.append((None,  _preprocess(content)))
         elif isinstance(content, list):
             for item in content:
                 if isinstance(item, str):
-                    contents.append({
-                        'title': None,
-                        'content': _preprocess(item),
-                    })
+                    contents.append((None, _preprocess(item)))
                 else:
                     raise ValueError('content should be str or list of str')
         else:
             raise ValueError('content should be str or list of str')
-        print("preprocess_fn content 2", content)
+        print("preprocess_fn content 2", contents)
 
         dataloader = prepare_data(device,
                                   tokenizer=tokenizer,

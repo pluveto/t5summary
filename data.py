@@ -126,9 +126,11 @@ def encode_dict(data,
     """
     ret = []
     for title, content in data:
+        print("encoding content:", content)
         text_ids = tokenizer.encode(content,
                                     max_length=max_len,
                                     truncation='only_first')
+        print("text_ids:", text_ids)
         if mode == 'train':
             summary_ids = tokenizer.encode(title,
                                            max_length=max_len,
@@ -152,6 +154,7 @@ def encode_dict(data,
                 'attention_mask': [1] * len(text_ids),
                 'raw_data': content
             }
+        print("features:", features)
         ret.append(features)
     return ret
 
@@ -234,8 +237,9 @@ def prepare_data(device,
 
     if loaded_data is None:
         raise Exception('No data loaded')
-
+    print("loaded_data:", loaded_data)
     encoded_data = encode_dict(loaded_data, tokenizer, max_len, mode)
+    print("encoded_data:", encoded_data)
     collate_fn = default_collate(device=device)
     dataloader = DataLoader(KeyDataset(encoded_data),
                             batch_size=batch_size,
