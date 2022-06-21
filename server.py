@@ -48,7 +48,7 @@ if __name__ == '__main__':
     try:
         load_dot_env([".env", "dev.env"])
     except FileNotFoundError:
-        logging.warning("not found .env file")
+        print("not found .env file")
 
     PROJECT_ID = os.getenv('PROJECT_ID')
     MAX_LEN = int(os.getenv('MAX_LEN'))
@@ -63,17 +63,19 @@ if __name__ == '__main__':
     assert BATCH_SIZE > 0, 'BATCH_SIZE should be greater than 0'
     assert MAX_LEN_SUMMARY > 0, 'MAX_LEN_SUMMARY should be greater than 0'
     assert BATCH_SIZE is not None, 'BATCH_SIZE is not set'
+    assert MODEL_PATH is not None, 'MODEL_PATH is not set'
+    assert TOKENIZER_PATH is not None, 'TOKENIZER_PATH is not set'
 
     logger = init_logger(logging.getLogger(PROJECT_ID))
 
-    logging.info('Project %s loaded', PROJECT_ID)
+    logger.info('Project %s loaded', PROJECT_ID)
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    logging.info('Using device: {}'.format(device))
+    logger.info('Using device: {}'.format(device))
 
     # initializing model
-    logging.info('Loading tokenzier...')
+    logger.info('Loading tokenzier...')
     tokenizer = T5TokenizerFast.from_pretrained(TOKENIZER_PATH)
-    logging.info('Loading model...')
+    logger.info('Loading model...')
     model = torch.load(MODEL_PATH, map_location=device)
 
 
@@ -105,7 +107,7 @@ if __name__ == '__main__':
         return data
 
     inferrer = SummaryInferrer(model, preprocess_fn)
-    logging.info('Starting server')
+    logger.info('Starting server')
     # start flask server
     from flask import Flask, request, jsonify
     from flask_restful import Resource, Api
