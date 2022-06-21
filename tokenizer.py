@@ -11,7 +11,9 @@ class T5TokenizerFast(BertTokenizer):
     def _tokenize(self, text, *arg, **kwargs):
         split_tokens = []
         for text in self.pre_tokenizer(text):
-            split_tokens.append(text if text in self.vocab else super()._tokenize(text))
+            if text in self.vocab:
+                split_tokens.append(text)
+            else:
+                split_tokens.extend(super()._tokenize(text))
         return split_tokens
     
-
