@@ -97,24 +97,33 @@ if __name__ == '__main__':
     model = torch.load(MODEL_PATH, map_location=device)
 
     def preprocess_fn(content):
+        print("preprocess_fn content", content)
+
+        def _preprocess(s: str):
+            # remove \n and space
+            s = s.replace('\n', '')
+            s = s.replace('　', '')
+            s = s.replace(' ', '')
+
         contents = []
         # if content is str
         if isinstance(content, str):
             contents.append({
                 'title': None,
-                'content': content,
+                'content': _preprocess(content),
             })
         elif isinstance(content, list):
             for item in content:
                 if isinstance(item, str):
                     contents.append({
                         'title': None,
-                        'content': item,
+                        'content': _preprocess(item),
                     })
                 else:
                     raise ValueError('content should be str or list of str')
         else:
             raise ValueError('content should be str or list of str')
+        print("preprocess_fn content 2", content)
 
         dataloader = prepare_data(device,
                                   tokenizer=tokenizer,
@@ -122,7 +131,9 @@ if __name__ == '__main__':
                                   batch_size=BATCH_SIZE,
                                   mode='predict',
                                   data=contents)
-        return next(iter(dataloader))
+        ret = next(iter(dataloader))
+        print("preprocess_fn ret", ret)
+        return ret
 
     inferrer = SummaryInferrer(model, preprocess_fn)
     logger.info('Starting server')
