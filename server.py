@@ -15,6 +15,7 @@ from tqdm.auto import tqdm
 from multiprocessing import Pool, Process
 import pandas as pd
 import numpy as np
+from flask_cors import CORS
 
 
 class SummaryInferrer(object):
@@ -184,6 +185,7 @@ if __name__ == '__main__':
             })
 
     app = Flask(PROJECT_ID)
+    app = CORS(app)
     api = Api(app)
     api.add_resource(SummaryResource, '/summary')
     api.add_resource(IndexResource, '/')
