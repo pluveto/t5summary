@@ -56,6 +56,9 @@ if __name__ == '__main__':
     BATCH_SIZE = int(os.getenv('BATCH_SIZE'))
     MODEL_PATH = os.getenv('MODEL_PATH')
     TOKENIZER_PATH = os.getenv('TOKENIZER_PATH')
+    DEBUG_MODE = os.getenv('DEBUG')
+    HOST = os.getenv('HOST', 'localhost')
+    PORT = int(os.getenv('PORT', 5000))
 
     assert PROJECT_ID is not None, 'PROJECT_ID is not set'
     assert MAX_LEN is not None, 'MAX_LEN is not set'
@@ -184,3 +187,4 @@ if __name__ == '__main__':
     api = Api(app)
     api.add_resource(SummaryResource, '/summary')
     api.add_resource(IndexResource, '/')
+    app.run(host=HOST, port=PORT, debug=DEBUG_MODE)
