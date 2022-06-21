@@ -1,5 +1,6 @@
 import logging
 import time
+import traceback
 from common import init_logger, load_dotenv
 from data import prepare_data
 from tokenizer import T5TokenizerFast
@@ -16,6 +17,7 @@ from multiprocessing import Pool, Process
 import pandas as pd
 import numpy as np
 from flask_cors import CORS
+from flask_ngrok import run_with_ngrok
 
 
 class SummaryInferrer(object):
@@ -107,7 +109,7 @@ if __name__ == '__main__':
                             max_len=MAX_LEN,
                             batch_size=BATCH_SIZE,
                             mode='predict',
-                            data=contents)
+                            dataloader=contents)
         return data
 
     inferrer = SummaryInferrer(model, preprocess_fn)
@@ -121,6 +123,9 @@ if __name__ == '__main__':
     API_ECODE_SERVER_ERR = 2
 
     class SummaryResource(Resource):
+        def options(self):
+          pass
+
         def post(self):
             content = request.json['content']
             if content is None:
@@ -150,6 +155,7 @@ if __name__ == '__main__':
                 results = inferrer.generate(content, MAX_LEN_SUMMARY)
             except Exception as e:
                 logger.error(e)
+                logger.error(traceback.format_exc())
                 return jsonify({
                     'status': API_ECODE_SERVER_ERR,
                     'message': str(e),
@@ -185,7 +191,11 @@ if __name__ == '__main__':
 
     app = Flask(__name__)
     CORS(app, supports_credentials=True)
+    run_with_ngrok(app)
     api = Api(app)
     api.add_resource(SummaryResource, '/summary')
     api.add_resource(IndexResource, '/')
-    app.run(host=HOST, port=PORT, debug=DEBUG_MODE, load_dotenv=False, use_reloader=False)
+    # app.run(host=HOST, port=PORT, debug=DEBUG_MODE, load_dotenv=False, use_reloader=False)
+    app.run()
+
+    

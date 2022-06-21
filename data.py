@@ -207,27 +207,27 @@ def prepare_data(tokenizer: PreTrainedTokenizer,
                  batch_size: int = 2,
                  mode='train',
                  data_path=None,
-                 data=None):
+                 dataloader=None):
 
-    data = None
+    loaded_data = None
 
     if data_path is not None:
         filetype = data_path.split('.')[-1]
         if filetype == 'json':
-            data = load_data_json(data_path)
+            loaded_data = load_data_json(data_path)
         elif filetype == 'jsonl':
-            data = load_data_json_lines(data_path)
+            loaded_data = load_data_json_lines(data_path)
         elif filetype == 'tsv':
-            data = load_data_tsv(data_path)
+            loaded_data = load_data_tsv(data_path)
         elif filetype == 'csv':
-            data = load_data_csv(data_path)
+            loaded_data = load_data_csv(data_path)
         else:
             raise Exception('Unsupported data file type: {}'.format(filetype))
-    if data is None:
-        data = data
+    if dataloader is None:
+        loaded_data = dataloader
 
-    data = encode_dict(data, tokenizer, max_len, mode)
-    data = DataLoader(KeyDataset(data),
+    encoded_data = encode_dict(loaded_data, tokenizer, max_len, mode)
+    dataloader = DataLoader(KeyDataset(encoded_data),
                       batch_size=batch_size,
                       collate_fn=to_torch_tensor)
-    return data
+    return dataloader
