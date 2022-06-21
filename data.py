@@ -202,6 +202,7 @@ def default_collate(device):
             return default_collate([default_collate(elem) for elem in batch])
 
         raise TypeError(default_collate_err_msg_format.format(elem_type))
+    
     return _collate
     
 
@@ -235,7 +236,8 @@ def prepare_data(device,
         raise Exception('No data loaded')
 
     encoded_data = encode_dict(loaded_data, tokenizer, max_len, mode)
+    collate_fn = default_collate(device=device)
     dataloader = DataLoader(KeyDataset(encoded_data),
                             batch_size=batch_size,
-                            collate_fn=default_collate(device=device))
+                            collate_fn=collate_fn)
     return dataloader
