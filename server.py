@@ -35,7 +35,7 @@ class SummaryInferrer(object):
         raw_data = feature['raw_data']
         # 剔除 raw_data、title，剩下 input_id 和 attention_mask
         content = {
-            k: v()
+            k: v
             for k, v in feature.items() if k not in ['raw_data', 'title']
         }
         print("content", content)

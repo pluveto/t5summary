@@ -158,8 +158,8 @@ def encode_dict(data,
 def default_collate(device):
     def _collate(batch):
         np_str_obj_array_pattern = re.compile(r'[SaUO]')
-        default_collate_err_msg_format = (
-            "default_collate: batch must contain tensors, numpy arrays, numbers, "
+        _collate_err_msg_format = (
+            "_collate: batch must contain tensors, numpy arrays, numbers, "
             "dicts or lists; found {}")
         elem = batch[0]
         elem_type = type(elem)
@@ -177,9 +177,9 @@ def default_collate(device):
             if elem_type.__name__ == 'ndarray' or elem_type.__name__ == 'memmap':
                 # array of string classes and object
                 if np_str_obj_array_pattern.search(elem.dtype.str) is not None:
-                    raise TypeError(default_collate_err_msg_format.format(elem.dtype))
+                    raise TypeError(_collate_err_msg_format.format(elem.dtype))
 
-                return default_collate([torch.as_tensor(b) for b in batch])
+                return _collate([torch.as_tensor(b) for b in batch])
             elif elem.shape == ():  # scalars
                 return torch.as_tensor(batch)
         elif isinstance(elem, float):
@@ -189,9 +189,9 @@ def default_collate(device):
         elif isinstance(elem, string_classes):
             return batch
         elif isinstance(elem, container_abcs.Mapping):
-            return {key: default_collate([d[key] for d in batch]) for key in elem}
+            return {key: _collate([d[key] for d in batch]) for key in elem}
         elif isinstance(elem, tuple) and hasattr(elem, '_fields'):  # namedtuple
-            return elem_type(*(default_collate(samples) for samples in zip(*batch)))
+            return elem_type(*(_collate(samples) for samples in zip(*batch)))
         elif isinstance(elem, container_abcs.Sequence):
             # check to make sure that the elements in batch have consistent size
             it = iter(batch)
@@ -199,9 +199,9 @@ def default_collate(device):
             if not all(len(elem) == elem_size for elem in it):
                 batch = sequence_padding(batch)
 
-            return default_collate([default_collate(elem) for elem in batch])
+            return _collate([_collate(elem) for elem in batch])
 
-        raise TypeError(default_collate_err_msg_format.format(elem_type))
+        raise TypeError(_collate_err_msg_format.format(elem_type))
     
     return _collate
     
