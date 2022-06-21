@@ -29,7 +29,8 @@ class SummaryInferrer(object):
         self.preprocess_fn = preprocess_fn
 
     def generate(self, content: str, max_len_summary: int):
-        feature = self.preprocess_fn(content)
+        dataloader = self.preprocess_fn(content)
+        feature = next(iter(dataloader))
         raw_data = feature['raw_data']
         content = {k: v for k, v in feature.items() if k != 'raw_data'}
         gen = model.generate(max_length=max_len_summary,
