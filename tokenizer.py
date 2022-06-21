@@ -1,7 +1,7 @@
 import jieba
 from transformers import BertTokenizer
 
-class T5PegasusTokenizer(BertTokenizer):
+class T5TokenizerFast(BertTokenizer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         

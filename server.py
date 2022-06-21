@@ -2,7 +2,7 @@ import logging
 import time
 from common import init_logger, load_dot_env
 from data import prepare_data
-from tokenizer import T5PegasusTokenizer
+from tokenizer import T5TokenizerFast
 from transformers import BertTokenizer
 from torch._six import container_abcs, string_classes, int_classes
 import torch
@@ -55,6 +55,7 @@ if __name__ == '__main__':
     MAX_LEN_SUMMARY = int(os.getenv('MAX_LEN_SUMMARY'))
     BATCH_SIZE = int(os.getenv('BATCH_SIZE'))
     MODEL_PATH = os.getenv('MODEL_PATH')
+    TOKENIZER_PATH = os.getenv('TOKENIZER_PATH')
 
     assert PROJECT_ID is not None, 'PROJECT_ID is not set'
     assert MAX_LEN is not None, 'MAX_LEN is not set'
@@ -63,17 +64,18 @@ if __name__ == '__main__':
     assert MAX_LEN_SUMMARY > 0, 'MAX_LEN_SUMMARY should be greater than 0'
     assert BATCH_SIZE is not None, 'BATCH_SIZE is not set'
 
+    logger = init_logger(logging.getLogger(PROJECT_ID))
+
     logging.info('Project %s loaded', PROJECT_ID)
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     logging.info('Using device: {}'.format(device))
 
     # initializing model
-
-    tokenizer = T5PegasusTokenizer.from_pretrained(MODEL_PATH)
-
+    logging.info('Loading tokenzier...')
+    tokenizer = T5TokenizerFast.from_pretrained(TOKENIZER_PATH)
+    logging.info('Loading model...')
     model = torch.load(MODEL_PATH, map_location=device)
 
-    logger = init_logger(logging.getLogger(PROJECT_ID))
 
     def preprocess_fn(content):
         contents = []
@@ -103,9 +105,9 @@ if __name__ == '__main__':
         return data
 
     inferrer = SummaryInferrer(model, preprocess_fn)
-
+    logging.info('Starting server')
     # start flask server
-    from flask import Flask, request, jsonify, APi
+    from flask import Flask, request, jsonify
     from flask_restful import Resource, Api
 
     API_OK = 0

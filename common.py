@@ -37,7 +37,7 @@ def load_dot_env(dot_env_file: str = '.env'):
             print('  {}: {}'.format(k, v))
 
 
-def init_logger(logger: logging.Logger) -> logging.Logger:
+def init_logger(logger: logging.Logger, debug=False) -> logging.Logger:
     """Initialize a logger.
 
     Args:
@@ -54,5 +54,5 @@ def init_logger(logger: logging.Logger) -> logging.Logger:
     handler = logging.StreamHandler()
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-    logger.setLevel(logging.INFO)
+    logger.setLevel(logging.DEBUG if debug else logging.INFO)
     return logger
