@@ -166,7 +166,7 @@ if __name__ == '__main__':
             if len(content) > MAX_LEN:
                 content = content[:MAX_LEN]
             try:
-                results = inferrer.generate(content, MAX_LEN_SUMMARY)
+                result = inferrer.generate(content, MAX_LEN_SUMMARY)
             except Exception as e:
                 logger.error(e)
                 logger.error(traceback.format_exc())
@@ -176,17 +176,17 @@ if __name__ == '__main__':
                     'result': None,
                 })
 
-            if len(results) != 1:
-                return jsonify({
-                    'status': API_ECODE_SERVER_ERR,
-                    'message': 'inferrer returned result with wrong length',
-                    'result': None,
-                })
+            # if len(results) == 0:
+            #     return jsonify({
+            #         'status': API_ECODE_SERVER_ERR,
+            #         'message': 'inferrer returned result with wrong length',
+            #         'result': None,
+            #     })
 
             return jsonify({
                 'status': API_OK,
                 'message': None,
-                'result': results,
+                'result': result,
             })
 
     starttime = time.time()
