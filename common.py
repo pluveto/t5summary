@@ -7,6 +7,16 @@ def load_dot_env(dot_env_file: str = '.env'):
     Args:
         dot_env_file (str): filename of the .env file.
     """
+    # if dot_env_file is list, load first existent file
+    if isinstance(dot_env_file, list):
+        for f in dot_env_file:
+            if os.path.exists(f):
+                dot_env_file = f
+                break
+
+    if not os.path.exists(dot_env_file):
+        raise FileNotFoundError(f'{dot_env_file} not found.')
+
     with open(dot_env_file, encoding='utf-8') as f:
         for l in f.readlines():
             # strip comments

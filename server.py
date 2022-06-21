@@ -45,7 +45,10 @@ if __name__ == '__main__':
 
     # initializing arguments
 
-    load_dot_env()
+    try:
+        load_dot_env([".env", "dev.env"])
+    except FileNotFoundError:
+        logging.warning("not found .env file")
 
     PROJECT_ID = os.getenv('PROJECT_ID')
     MAX_LEN = int(os.getenv('MAX_LEN'))
