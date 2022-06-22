@@ -210,4 +210,7 @@ if __name__ == '__main__':
     api.add_resource(SummaryResource, '/summary')
     api.add_resource(IndexResource, '/')
     # app.run(host=HOST, port=PORT, debug=DEBUG_MODE, load_dotenv=False, use_reloader=False)
+    logger.info("run first predict")
+    test_in = "为促进高校毕业生就业，近日，重庆市工商联举行“民企高校携手促就业行动”推进会。各相关政府部门、高校、行业商协会、民营企业等携手推出多种举措，千方百计促进大学生就业。西南大学启动实施“书记校长走访拓岗促就业”专项行动和“千人千岗就业见习助力乡村振兴”专项行动，进一步深化校地、校企合作和供需对接机制，建立起经常性走访用人单位的长效机制。"
+    inferrer.generate(test_in, MAX_LEN_SUMMARY)
     app.run()
